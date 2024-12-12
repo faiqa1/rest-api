@@ -1,0 +1,11 @@
+# Node.js modules
+node_modules/
+
+# Environment variables
+.env
+.env.*  # If using multiple environment files like .env.development or .env.production
+
+
+# Dependency locks
+package-lock.json
+
