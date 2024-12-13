@@ -66,6 +66,45 @@ const updateTask = asyncHandler(async (req, res) => {
   const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.status(200).json(updatedTask);
 });
+// @desc Patch a task
+// @route PATCH /api/tasks/:id
+// @access private
+const patchTask = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  console.log("Received task ID:", id); // Log the task ID to verify it's passed correctly
+
+  // Validate if the provided ID is a valid MongoDB ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    console.log("Invalid ObjectId format:", id); // Log if the ID is invalid
+    return res.status(400).json({ message: "Invalid task ID format" });
+  }
+
+  // Find the task by ID
+  const task = await Task.findById(id);
+
+  console.log("Found task:", task); // Log the found task to verify it's correct
+
+  // If task not found, return 404
+  if (!task) {
+    return res.status(404).json({ message: "Task not found" });
+  }
+
+  // Check if the task belongs to the logged-in user
+  if (task.user_id.toString() !== req.user.id) {
+    return res.status(403).json({ message: "Unauthorized user" });
+  }
+
+  // Update the task with the provided fields
+  const patchedTask = await Task.findByIdAndUpdate(id, req.body, { new: true });
+
+  console.log("Patched task:", patchedTask); // Log the result of the patch operation
+
+  // Send a success response
+  res.status(200).json(patchedTask);
+});
+
+
 
 // @desc Delete a task
 // @route DELETE /api/tasks/:id
@@ -97,5 +136,6 @@ module.exports = {
   createTask,
   getTask,
   updateTask,
+  patchTask,
   deleteTask
 };

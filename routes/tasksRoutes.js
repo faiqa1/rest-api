@@ -6,12 +6,13 @@ const {
     createTask,
     getTask,
     updateTask, 
-    deleteTask
+    deleteTask,
+    patchTask
 } = require("../controllers/taskController")
 
 const validateToken = require("../middleware/validateTokenHandler");
 
 router.use(validateToken);
 router.route("/").get(getTasks).post(createTask)
-router.route("/:id").get(getTask).put(updateTask).delete(deleteTask)
+router.route("/:id").get(getTask).put(updateTask).delete(deleteTask).patch(patchTask)
 module.exports = router
